@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const {randomBytes} = require('crypto')
+const cors = require('cors')
 app.use(bodyParser.json());
-
+app.use(cors());
 let posts = {}
 
 app.get('/posts',(req,res) => {
@@ -12,8 +13,8 @@ app.get('/posts',(req,res) => {
 
 app.post('/posts',(req,res) => {
     const id = randomBytes(4).toString('hex');
-    posts[id] = req.body.title;
-    res.sendStatus(201).send(posts[id]);
+    posts[id] = {id: id,title:req.body.title};
+    res.status(201).send(posts[id]);
 })
 
 app.listen(4000,() => {
