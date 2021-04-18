@@ -4,7 +4,7 @@ function PostCreate() {
     const [title,setTitle] = useState('');
     const submitHandler = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:4000/posts',{
+        axios.post('http://posts.com/posts/create',{
             title
         })
         setTitle('');

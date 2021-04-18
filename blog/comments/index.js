@@ -14,7 +14,15 @@ app.get('/posts/:id/comments',(req,res) => {
 })
 
 app.post('/events',(req,res) => {
-    console.log(req.body.type)
+    const { type, data } = req.body;
+
+    if(type==="COMMENT_UPDATED"){
+        const { status,postId,id } = data;
+        let comment = commentsByPostId[postId].find(c => {
+            return c.id === id
+        })
+        comment.status = status;
+    }
     res.send({status:'OK'});
 })
 
@@ -22,14 +30,15 @@ app.post('/posts/:id/comments',async (req,res) => {
     const comid = randomBytes(4).toString('hex');
     let id = req.params.id;
     let comments = commentsByPostId[id]?commentsByPostId[id]:[];
-    let comment = {id: comid,comment: req.body.comment};
+    let comment = {id: comid,comment: req.body.comment,status:'pending'};
     comments.push(comment);
     commentsByPostId[id] = comments;
-    await axios.post("http://localhost:4004/events",{
+    await axios.post("http://event-bus-srv:4004/events",{
         type: 'COMMENT_CREATED',
         data:{
             id: comid,
             comment:  req.body.comment,
+            status:'pending',
             postId: id
         }
     })

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comment-moderator-depl
+spec:
+  selector:
+    matchLabels:
+      app: comment-moderator
+  template:
+    metadata:
+      labels:
+        app: comment-moderator
+    spec:
+      containers:
+      - name: comment-moderator
+        image: pravash27/comment-moderator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comment-moderator-srv
+spec:
+  selector:
+    app: comment-moderator
+  type: ClusterIP
+  ports:
+  - name: comment-moderator
+    protocol: TCP
+    port: 4003
+    targetPort: 4003
+
+

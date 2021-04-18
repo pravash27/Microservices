@@ -5,13 +5,21 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 app.use(bodyParser.json())
 app.use(cors())
-
+let events = [];
 app.post('/events',(req,res) => {
-    let data = req.body;
-    axios.post('http://localhost:4000/events',data)
-    axios.post('http://localhost:4001/events',data)
-    axios.post('http://localhost:4002/events',data)
+    let event = req.body;
+    console.log(event.type);
+    events.push(event)
+    axios.post('http://posts-clusterip-srv:4000/events',event)
+    axios.post('http://comments-srv:4001/events',event)
+    axios.post('http://query-srv:4002/events',event)
+    axios.post('http://comment-moderator-srv:4003/events',event)
+    console.log(events)
     res.send({status:'OK'});
+})
+
+app.get('/events',(req,res) =>{
+    res.send(events);
 })
 
 
